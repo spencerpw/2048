@@ -1,10 +1,10 @@
 # 2048
 
-## Can I clone 2048 with 8 hours of work?
+## Can I clone 2048 in 8 hours?
 
 This is a simple exercise to try and get a playable version of 2048 made in Unity within a single work day. Emphasis is on functionality and speed, therefore code will not be super clean. Solutions will likely be whatever I think of first rather than what is most optimal.
 
-##Features
+## Features
 - 4x4 grid containing number tiles
 - Number tiles on grid with different coloured backgrounds
 - Arrow keys or touch gestures to slide all tiles in a direction
