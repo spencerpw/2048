@@ -15,3 +15,6 @@ This is a simple exercise to try and get a playable version of 2048 made in Unit
 - After each slide, check if the board is full and if there are any tiles of the same value side by side. If not game over
 
  
+## Controls
+
+On Mac/PC use arrow keys. On a mobile device swipe up, down, left or right. Tap or hit enter to restart after a game over.
