@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 public class Tile : MonoBehaviour {
-	const float TWEEN_DURATION = 0.2f;
+	public const float TWEEN_DURATION = 0.2f;
 
 	[SerializeField] private TextMeshProUGUI numberText;
 	[SerializeField] private Image image;
@@ -16,7 +16,7 @@ public class Tile : MonoBehaviour {
 	public RectTransform rectTransform;
 	public int row;
 	public int col;
-	public bool merged;
+	public bool merging;
 
 	private int number;
 
@@ -44,15 +44,18 @@ public class Tile : MonoBehaviour {
 	public void SpawnTween() {
 		transform.localScale = Vector3.zero;
 		transform.DOScale(Vector3.one,TWEEN_DURATION)
-			.SetEase(Ease.OutQuad)
-			.OnComplete( () => {
-				Messenger.Broadcast("EnableInput");
-			});
+			.SetEase(Ease.OutQuad);
 	}
 
 	public void MergeTween() {
 		transform.localScale = Vector3.one / 2f;
 		transform.DOScale(Vector3.one,TWEEN_DURATION)
 			.SetEase(Ease.OutQuad);
+	}
+
+	public void SlideTween(Vector3 target, TweenCallback cb = null) {
+		transform.DOLocalMove(target,TWEEN_DURATION)
+			.SetEase(Ease.OutQuad)
+			.OnComplete(cb);
 	}
 }

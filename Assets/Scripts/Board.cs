@@ -120,6 +120,16 @@ public class Board : MonoBehaviour {
 		tiles.Add(newTile);
 	}
 
+	private void DoMergeSlide(Tile merging, Tile adjacent) {
+		if(CanMerge(merging, adjacent)) {
+			merging.SlideTween(GetBoardPosition(adjacent.col,adjacent.row), () => {
+				Merge(merging, adjacent);
+				});
+		} else {
+			merging.SlideTween(GetBoardPosition(merging.col, merging.row));
+		}
+	}
+
 	public void SlideUp() {
 		foreach(Tile t in tiles.OrderByDescending(ti => ti.row)) {
 			if(t.row < rows-1) {
@@ -132,15 +142,15 @@ public class Board : MonoBehaviour {
 					}
 				}
 
-				t.transform.localPosition = GetBoardPosition(t.col,t.row);
-
 				if(t.row < rows-1) {
-					TryMerge(t, tileGrid[t.col,t.row+1]);
+					DoMergeSlide(t,tileGrid[t.col,t.row+1]);
+				} else {
+					t.SlideTween(GetBoardPosition(t.col,t.row));
 				}
 			}
 		}
 
-		EndSlide();
+		StartCoroutine(EndSlide());
 	}
 
 	public void SlideDown() {
@@ -155,15 +165,15 @@ public class Board : MonoBehaviour {
 					}
 				}
 
-				t.transform.localPosition = GetBoardPosition(t.col,t.row);
-
 				if(t.row > 0) {
-					TryMerge(t, tileGrid[t.col,t.row-1]);
+					DoMergeSlide(t,tileGrid[t.col,t.row-1]);
+				} else {
+					t.SlideTween(GetBoardPosition(t.col,t.row));
 				}
 			}
 		}
 
-		EndSlide();
+		StartCoroutine(EndSlide());
 	}
 
 	public void SlideLeft() {
@@ -178,15 +188,16 @@ public class Board : MonoBehaviour {
 					}
 				}
 
-				t.transform.localPosition = GetBoardPosition(t.col,t.row);
-
 				if(t.col > 0) {
-					TryMerge(t, tileGrid[t.col-1,t.row]);
+					DoMergeSlide(t,tileGrid[t.col-1,t.row]);
+				} else {
+					t.SlideTween(GetBoardPosition(t.col,t.row));
 				}
+
 			}
 		}
 
-		EndSlide();
+		StartCoroutine(EndSlide());
 	}
 
 	public void SlideRight() {
@@ -201,19 +212,22 @@ public class Board : MonoBehaviour {
 					}
 				}
 
-				t.transform.localPosition = GetBoardPosition(t.col,t.row);
-
 				if(t.col < columns-1) {
-					TryMerge(t, tileGrid[t.col+1,t.row]);
+					DoMergeSlide(t,tileGrid[t.col+1,t.row]);
+
+				} else {
+					t.SlideTween(GetBoardPosition(t.col,t.row));
 				}
 			}
 		}
 
 
-		EndSlide();
+		StartCoroutine(EndSlide());
 	}
 
-	private void EndSlide() {
+	private IEnumerator EndSlide() {
+		yield return new WaitForSeconds(Tile.TWEEN_DURATION);
+
 		CheckGameOver();
 
 		if(slid || merged) {
@@ -222,11 +236,14 @@ public class Board : MonoBehaviour {
 		}
 
 		foreach(Tile t in tiles) {
-			t.merged = false;
+			t.merging = false;
 		}
 
 		slid = false;
 		merged = false;
+
+		Messenger.Broadcast("EnableInput");
+
 	}
 
 	private void CheckGameOver() {
@@ -270,16 +287,22 @@ public class Board : MonoBehaviour {
 		}
 	}
 
-	private void TryMerge(Tile first, Tile second) {
-		if(first.Number == second.Number && !first.merged && !second.merged) {
-			second.Number += first.Number;
-			second.merged = true;
-			second.MergeTween();
+	private void Merge(Tile first, Tile second) {
+		second.Number += first.Number;
+		second.MergeTween();
+		tiles.Remove(first);
+		Destroy(first.gameObject);
+		merged = true;
+	}
+
+	private bool CanMerge(Tile first, Tile second) {
+		if(first.Number == second.Number && !first.merging && !second.merging) {
 			tileGrid[first.col,first.row] = null;
-			tiles.Remove(first);
-			Destroy(first.gameObject);
-			merged = true;
+			second.merging = true;
+			return true;
 		}
+
+		return false;
 	}
 
 	#if UNITY_EDITOR
