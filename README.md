@@ -14,4 +14,4 @@ This is a simple exercise to try and get a playable version of 2048 made in Unit
 - After each slide, check if there is a tile with value 2048, if so the player wins
 - After each slide, check if the board is full and if there are any tiles of the same value side by side. If not game over
 
-
+ 
