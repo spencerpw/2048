@@ -27,6 +27,8 @@ public class Board : MonoBehaviour {
 		tiles = new List<Tile>();
 
 		CalculateSizes();
+
+		Application.targetFrameRate = 60;
 	}
 
 	private void Start() {
