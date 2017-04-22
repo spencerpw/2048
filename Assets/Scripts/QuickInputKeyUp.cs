@@ -13,6 +13,20 @@ public class QuickInputKeyUp : MonoBehaviour {
 	public List<KeyCode> keyCodes;
 	public UnityEvent[] events;
 
+	private void Start() {
+		Messenger.AddListener("DisableInput",DisableInput);
+		Messenger.AddListener("EnableInput",EnableInput);
+
+	}
+
+	private void DisableInput() {
+		enabled = false;
+	}
+
+	private void EnableInput() {
+		enabled = true;
+	}
+
 	private void Update() {
 		for(int i = 0; i < keyCodes.Count; i++) {
 			if(Input.GetKeyUp(keyCodes[i])) {

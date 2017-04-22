@@ -58,8 +58,8 @@ public class Board : MonoBehaviour {
 	private Vector3 GetBoardPosition(int x, int y) {
 		Vector3 pos = Vector3.zero;
 
-		pos.x = x * tileSize.x + (x+1) * (tilePadding);
-		pos.y = y * tileSize.y + (y+1) * (tilePadding);
+		pos.x = x * tileSize.x + (x+1) * (tilePadding) + tileSize.x/2f;//quick fix after I moved the pivots to the center
+		pos.y = y * tileSize.y + (y+1) * (tilePadding) + tileSize.y/2f;
 
 		return pos;
 	}
@@ -115,6 +115,7 @@ public class Board : MonoBehaviour {
 		newTile.transform.localPosition = GetBoardPosition(c,r);
 		newTile.row = r;
 		newTile.col = c;
+		newTile.SpawnTween();
 		tileGrid[c,r] = newTile;
 		tiles.Add(newTile);
 	}
@@ -216,6 +217,7 @@ public class Board : MonoBehaviour {
 		CheckGameOver();
 
 		if(slid || merged) {
+			Messenger.Broadcast("DisableInput");
 			SpawnTile();
 		}
 

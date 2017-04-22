@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class Tile : MonoBehaviour {
+	const float TWEEN_DURATION = 0.2f;
+
 	[SerializeField] private TextMeshProUGUI numberText;
 	[SerializeField] private Image image;
 	[SerializeField] private Color startColour;
@@ -36,5 +39,14 @@ public class Tile : MonoBehaviour {
 		float power = Mathf.Log(Number) / Mathf.Log(2);
 		image.color = Color.Lerp(startColour,endColour, (power-1)/11f);
 
+	}
+
+	public void SpawnTween() {
+		transform.localScale = Vector3.zero;
+		transform.DOScale(Vector3.one,TWEEN_DURATION)
+			.SetEase(Ease.OutQuad)
+			.OnComplete( () => {
+				Messenger.Broadcast("EnableInput");
+			});
 	}
 }
