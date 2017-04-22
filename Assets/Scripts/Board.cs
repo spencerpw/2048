@@ -12,6 +12,7 @@ public class Board : MonoBehaviour {
 	[SerializeField] private Transform backgroundRoot;
 	[SerializeField] private Transform tileRoot;
 	[SerializeField] private Tile tilePrefab;
+	[SerializeField] private GameObject gameOverRoot;
 
 	public RectTransform rectTransform;
 
@@ -212,8 +213,11 @@ public class Board : MonoBehaviour {
 	}
 
 	private void EndSlide() {
-		if(slid || merged)
+		CheckGameOver();
+
+		if(slid || merged) {
 			SpawnTile();
+		}
 
 		foreach(Tile t in tiles) {
 			t.merged = false;
@@ -224,7 +228,44 @@ public class Board : MonoBehaviour {
 	}
 
 	private void CheckGameOver() {
-		
+		if(tiles.Count() == rows * columns) {
+			bool canMerge = false;
+
+			foreach(Tile t in tiles) {
+				//check above
+				if(t.row < rows - 1) {
+					if(tileGrid[t.col,t.row + 1] != null && tileGrid[t.col,t.row + 1].Number == t.Number) {
+						canMerge = true;
+						break;
+					}
+				}
+				//below
+				if(t.row > 0) {
+					if(tileGrid[t.col,t.row - 1] != null && tileGrid[t.col,t.row - 1].Number == t.Number) {
+						canMerge = true;
+						break;
+					}
+				}
+				//left
+				if(t.col > 0) {
+					if(tileGrid[t.col - 1,t.row] != null && tileGrid[t.col - 1,t.row].Number == t.Number) {
+						canMerge = true;
+						break;
+					}
+				}
+				//right
+				if(t.col < columns - 1) {
+					if(tileGrid[t.col + 1,t.row] != null && tileGrid[t.col + 1,t.row].Number == t.Number) {
+						canMerge = true;
+						break;
+					}
+				}
+			}
+
+			if(!canMerge) {
+				gameOverRoot.SetActive(true);
+			}
+		}
 	}
 
 	private void TryMerge(Tile first, Tile second) {
