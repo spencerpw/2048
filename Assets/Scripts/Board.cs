@@ -32,6 +32,8 @@ public class Board : MonoBehaviour {
 	}
 
 	private void Start() {
+		Messenger.Broadcast<int>("SetPoints",0);
+
 		DrawEmptyTiles();
 
 		//Begin game with two tiles
@@ -302,6 +304,8 @@ public class Board : MonoBehaviour {
 		tiles.Remove(first);
 		Destroy(first.gameObject);
 		merged = true;
+
+		Messenger.Broadcast<int>("AddPoints",second.Number);
 	}
 
 	private bool CanMerge(Tile first, Tile second) {
@@ -327,6 +331,7 @@ public class Board : MonoBehaviour {
 
 		Awake();
 		Start();
+
 	}
 
 	#if UNITY_EDITOR
