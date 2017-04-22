@@ -15,11 +15,13 @@ public class Board : MonoBehaviour {
 
 	public RectTransform rectTransform;
 
-	private Tile[,] tiles;
+	private Tile[,] tileGrid;
+	private List<Tile> tiles; //to have an enumerable to iterate on
 	private Vector2 tileSize;
 
 	private void Awake() {
-		tiles = new Tile[rows,columns];
+		tileGrid = new Tile[columns,rows];
+		tiles = new List<Tile>();
 
 		CalculateSizes();
 	}
@@ -39,29 +41,29 @@ public class Board : MonoBehaviour {
 	}
 
 	private void DrawEmptyTiles() {
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
+		for(int x = 0; x < columns; x++) {
+			for(int y = 0; y < rows; y++) {
 				Image newBG = GameObject.Instantiate(tileBackground, backgroundRoot);
-				newBG.name = string.Format("{0},{1}",j,i);
+				newBG.name = string.Format("{0},{1}",x,y);
 				newBG.rectTransform.sizeDelta = tileSize;
-				newBG.rectTransform.localPosition = GetBoardPosition(i,j);
+				newBG.rectTransform.localPosition = GetBoardPosition(x,y);
 
 			}
 		}
 	}
 
-	private Vector3 GetBoardPosition(int row, int col) {
+	private Vector3 GetBoardPosition(int x, int y) {
 		Vector3 pos = Vector3.zero;
 
-		pos.x = col * tileSize.x + (col+1) * (tilePadding);
-		pos.y = row * tileSize.y + (row+1) * (tilePadding);
+		pos.x = x * tileSize.x + (x+1) * (tilePadding);
+		pos.y = y * tileSize.y + (y+1) * (tilePadding);
 
 		return pos;
 	}
 
 	public void SpawnTile() {
 		//First check if board is full in a fast to write slow as hell crappy way
-		if(FindObjectsOfType<Tile>().Count() == rows * columns) {
+		if(tiles.Count() == rows * columns) {
 			Debug.LogWarning("Board::SpawnTile A tile could not be spawned. The board is full");
 			return;
 		}
@@ -73,27 +75,68 @@ public class Board : MonoBehaviour {
 		int r = Random.Range(0,rows);
 		int c = Random.Range(0,columns);
 
-		if(tiles[r,c] != null) {
-			for(int i = r+1; i != r; i++) {
-				if(i >= rows) i = 0;
-
-				for(int j = 0; j < columns; j++) {
-					if(tiles[i,j] == null) {
-						r = i;
-						c = j;
-						break;
-					}
+		//This is still pretty bad, but good enough
+		if(tileGrid[c,r] != null) {
+			for(int y = r+1; y != r; y++) {
+				if(y >= rows) { 
+					y = -1;
+					continue;
 				}
 
-				if(tiles[r,c] == null) break;
+				if(tileGrid[c,y] == null) {
+					r = y;
+					break;
+				}
+			}
+
+			if(tileGrid[c,r] != null) {
+				for(int x = c+1; x != c; x++) {
+					if(x >= columns) x = 0;
+
+					for(int y = 0; y < rows; y++) {
+						if(tileGrid[x,y] == null) {
+							c = x;
+							r = y;
+							break;
+						}
+					}
+
+					if(tileGrid[c,r] == null) break;
+				}
 			}
 		}
 
 
 		Tile newTile = GameObject.Instantiate(tilePrefab, tileRoot);
 		newTile.rectTransform.sizeDelta = tileSize;
-		newTile.transform.localPosition = GetBoardPosition(r,c);
-		tiles[r,c] = newTile;
+		newTile.transform.localPosition = GetBoardPosition(c,r);
+		newTile.row = r;
+		newTile.col = c;
+		tileGrid[c,r] = newTile;
+		tiles.Add(newTile);
+	}
+
+	public void SlideUp() {
+		foreach(Tile t in tiles.OrderByDescending(ti => ti.row)) {
+			
+		}
+
+		SpawnTile();
+	}
+
+	public void SlideDown() {
+
+		SpawnTile();
+	}
+
+	public void SlideLeft() {
+
+		SpawnTile();
+	}
+
+	public void SlideRight() {
+
+		SpawnTile();
 	}
 
 	#if UNITY_EDITOR
@@ -105,12 +148,13 @@ public class Board : MonoBehaviour {
 
 	[ContextMenu("Redraw")]
 	public void RedrawBoard() {
-		foreach(Transform t in transform) {
+		foreach(Tile t in tiles) {
 			Destroy(t.gameObject);
 		}
 
-		CalculateSizes();
-		DrawEmptyTiles();
+
+		Awake();
+		Start();
 	}
 
 	#endif

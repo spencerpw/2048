@@ -11,6 +11,8 @@ public class Tile : MonoBehaviour {
 	[SerializeField] private Color endColour;
 
 	public RectTransform rectTransform;
+	public int row;
+	public int col;
 
 	private int number;
 
