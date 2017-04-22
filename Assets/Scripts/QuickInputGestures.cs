@@ -14,7 +14,8 @@ public class QuickInputGestures : MonoBehaviour {
 		Up,
 		Down,
 		Right,
-		Left
+		Left,
+		Tap
 	}
 	public UnityEvent[] events;
 	public float threshold;
@@ -52,6 +53,8 @@ public class QuickInputGestures : MonoBehaviour {
 						events[(int)Direction.Right].Invoke();
 					else
 						events[(int)Direction.Left].Invoke();
+				} else {
+					events[(int)Direction.Tap].Invoke();
 				}
 			}
 		}

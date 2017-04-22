@@ -131,6 +131,8 @@ public class Board : MonoBehaviour {
 	}
 
 	public void SlideUp() {
+		Messenger.Broadcast("DisableInput");
+
 		foreach(Tile t in tiles.OrderByDescending(ti => ti.row)) {
 			if(t.row < rows-1) {
 				for(int y = t.row; y < rows; y++) {
@@ -154,6 +156,8 @@ public class Board : MonoBehaviour {
 	}
 
 	public void SlideDown() {
+		Messenger.Broadcast("DisableInput");
+
 		foreach(Tile t in tiles.OrderBy(ti => ti.row)) {
 			if(t.row > 0) {
 				for(int y = t.row; y >= 0; y--) {
@@ -177,6 +181,8 @@ public class Board : MonoBehaviour {
 	}
 
 	public void SlideLeft() {
+		Messenger.Broadcast("DisableInput");
+
 		foreach(Tile t in tiles.OrderBy(ti => ti.col)) {
 			if(t.col > 0) {
 				for(int x = t.col; x >= 0; x--) {
@@ -201,6 +207,8 @@ public class Board : MonoBehaviour {
 	}
 
 	public void SlideRight() {
+		Messenger.Broadcast("DisableInput");
+
 		foreach(Tile t in tiles.OrderByDescending(ti => ti.col)) {
 			if(t.col < columns-1) {
 				for(int x = t.col; x < columns; x++) {
@@ -231,7 +239,6 @@ public class Board : MonoBehaviour {
 		CheckGameOver();
 
 		if(slid || merged) {
-			Messenger.Broadcast("DisableInput");
 			SpawnTile();
 		}
 
@@ -305,6 +312,21 @@ public class Board : MonoBehaviour {
 		return false;
 	}
 
+	public void TryRestart() {
+		if(gameOverRoot.activeInHierarchy) Restart();	
+	}
+
+	private void Restart() {
+		gameOverRoot.SetActive(false);
+
+		foreach(Tile t in tiles) {
+			Destroy(t.gameObject);
+		}
+
+		Awake();
+		Start();
+	}
+
 	#if UNITY_EDITOR
 
 	[ContextMenu("Spawn Tile")]
@@ -314,13 +336,7 @@ public class Board : MonoBehaviour {
 
 	[ContextMenu("Redraw")]
 	public void RedrawBoard() {
-		foreach(Tile t in tiles) {
-			Destroy(t.gameObject);
-		}
-
-
-		Awake();
-		Start();
+		Restart();
 	}
 
 	#endif

@@ -13,11 +13,11 @@ public class QuickInputGesturesEditor : Editor {
 	{
 		QuickInputGestures myTarget = (QuickInputGestures)target;
 
-		if (myTarget.events == null) myTarget.events = new UnityEvent[4];
+		if (myTarget.events == null) myTarget.events = new UnityEvent[5];
 
 		myTarget.threshold = EditorGUILayout.FloatField("Threshold", myTarget.threshold);
 
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < 5; i++) {
 			EditorGUILayout.LabelField(((QuickInputGestures.Direction)i).ToString());
 			SerializedProperty sProp = serializedObject.FindProperty("events").GetArrayElementAtIndex(i);
 			EditorGUIUtility.LookLikeControls();
