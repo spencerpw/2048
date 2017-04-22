@@ -118,25 +118,108 @@ public class Board : MonoBehaviour {
 
 	public void SlideUp() {
 		foreach(Tile t in tiles.OrderByDescending(ti => ti.row)) {
-			
+			if(t.row < rows-1) {
+				for(int y = t.row; y < rows; y++) {
+					if(tileGrid[t.col,y] == null) {
+						tileGrid[t.col,t.row] = null;
+						tileGrid[t.col,y] = t;
+						t.row = y;
+					}
+				}
+
+				t.transform.localPosition = GetBoardPosition(t.col,t.row);
+
+				if(t.row < rows-1) {
+					TryMerge(t, tileGrid[t.col,t.row+1]);
+				}
+			}
 		}
 
-		SpawnTile();
+		EndSlide();
 	}
 
 	public void SlideDown() {
+		foreach(Tile t in tiles.OrderBy(ti => ti.row)) {
+			if(t.row > 0) {
+				for(int y = t.row; y >= 0; y--) {
+					if(tileGrid[t.col,y] == null) {
+						tileGrid[t.col,t.row] = null;
+						tileGrid[t.col,y] = t;
+						t.row = y;
+					}
+				}
 
-		SpawnTile();
+				t.transform.localPosition = GetBoardPosition(t.col,t.row);
+
+				if(t.row > 0) {
+					TryMerge(t, tileGrid[t.col,t.row-1]);
+				}
+			}
+		}
+
+		EndSlide();
 	}
 
 	public void SlideLeft() {
+		foreach(Tile t in tiles.OrderBy(ti => ti.col)) {
+			if(t.col > 0) {
+				for(int x = t.col; x >= 0; x--) {
+					if(tileGrid[x,t.row] == null) {
+						tileGrid[t.col,t.row] = null;
+						tileGrid[x,t.row] = t;
+						t.col = x;
+					}
+				}
 
-		SpawnTile();
+				t.transform.localPosition = GetBoardPosition(t.col,t.row);
+
+				if(t.col > 0) {
+					TryMerge(t, tileGrid[t.col-1,t.row]);
+				}
+			}
+		}
+
+		EndSlide();
 	}
 
 	public void SlideRight() {
+		foreach(Tile t in tiles.OrderByDescending(ti => ti.col)) {
+			if(t.col < columns-1) {
+				for(int x = t.col; x < columns; x++) {
+					if(tileGrid[x,t.row] == null) {
+						tileGrid[t.col,t.row] = null;
+						tileGrid[x,t.row] = t;
+						t.col = x;
+					}
+				}
 
+				t.transform.localPosition = GetBoardPosition(t.col,t.row);
+
+				if(t.col < columns-1) {
+					TryMerge(t, tileGrid[t.col+1,t.row]);
+				}
+			}
+		}
+
+
+		EndSlide();
+	}
+
+	private void EndSlide() {
 		SpawnTile();
+	}
+
+	private void CheckGameOver() {
+		
+	}
+
+	private void TryMerge(Tile first, Tile second) {
+		if(first.Number == second.Number) {
+			second.Number += first.Number;
+			tileGrid[first.col,first.row] = null;
+			tiles.Remove(first);
+			Destroy(first.gameObject);
+		}
 	}
 
 	#if UNITY_EDITOR
