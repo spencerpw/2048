@@ -18,6 +18,8 @@ public class Board : MonoBehaviour {
 	private Tile[,] tileGrid;
 	private List<Tile> tiles; //to have an enumerable to iterate on
 	private Vector2 tileSize;
+	private bool slid;
+	private bool merged;
 
 	private void Awake() {
 		tileGrid = new Tile[columns,rows];
@@ -124,6 +126,7 @@ public class Board : MonoBehaviour {
 						tileGrid[t.col,t.row] = null;
 						tileGrid[t.col,y] = t;
 						t.row = y;
+						slid = true;
 					}
 				}
 
@@ -146,6 +149,7 @@ public class Board : MonoBehaviour {
 						tileGrid[t.col,t.row] = null;
 						tileGrid[t.col,y] = t;
 						t.row = y;
+						slid = true;
 					}
 				}
 
@@ -168,6 +172,7 @@ public class Board : MonoBehaviour {
 						tileGrid[t.col,t.row] = null;
 						tileGrid[x,t.row] = t;
 						t.col = x;
+						slid = true;
 					}
 				}
 
@@ -190,6 +195,7 @@ public class Board : MonoBehaviour {
 						tileGrid[t.col,t.row] = null;
 						tileGrid[x,t.row] = t;
 						t.col = x;
+						slid = true;
 					}
 				}
 
@@ -206,7 +212,15 @@ public class Board : MonoBehaviour {
 	}
 
 	private void EndSlide() {
-		SpawnTile();
+		if(slid || merged)
+			SpawnTile();
+
+		foreach(Tile t in tiles) {
+			t.merged = false;
+		}
+
+		slid = false;
+		merged = false;
 	}
 
 	private void CheckGameOver() {
@@ -214,11 +228,13 @@ public class Board : MonoBehaviour {
 	}
 
 	private void TryMerge(Tile first, Tile second) {
-		if(first.Number == second.Number) {
+		if(first.Number == second.Number && !first.merged && !second.merged) {
 			second.Number += first.Number;
+			second.merged = true;
 			tileGrid[first.col,first.row] = null;
 			tiles.Remove(first);
 			Destroy(first.gameObject);
+			merged = true;
 		}
 	}
 

@@ -13,6 +13,7 @@ public class Tile : MonoBehaviour {
 	public RectTransform rectTransform;
 	public int row;
 	public int col;
+	public bool merged;
 
 	private int number;
 
