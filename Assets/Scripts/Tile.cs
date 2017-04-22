@@ -49,4 +49,10 @@ public class Tile : MonoBehaviour {
 				Messenger.Broadcast("EnableInput");
 			});
 	}
+
+	public void MergeTween() {
+		transform.localScale = Vector3.one / 2f;
+		transform.DOScale(Vector3.one,TWEEN_DURATION)
+			.SetEase(Ease.OutQuad);
+	}
 }

@@ -274,6 +274,7 @@ public class Board : MonoBehaviour {
 		if(first.Number == second.Number && !first.merged && !second.merged) {
 			second.Number += first.Number;
 			second.merged = true;
+			second.MergeTween();
 			tileGrid[first.col,first.row] = null;
 			tiles.Remove(first);
 			Destroy(first.gameObject);
