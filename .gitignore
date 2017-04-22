@@ -1,0 +1,17 @@
+.DS_Store
+Library
+Temp
+*.csproj
+*.sln
+Assets/-tk2d.asset
+Assets/-tk2d.asset.meta
+*.unityproj
+*.~lock*
+Assets/PlayMaker/PlayMaker.sln.meta
+Assets/PlayMaker/PlayMaker.userprefs*
+obj
+Assets/Plugins/PlayMaker/WP8/PlayMaker.sln.meta
+Assets/Plugins/PlayMaker/WP8/PlayMaker.userprefs
+Assets/Plugins/PlayMaker/WP8/PlayMaker.userprefs.meta
+LocalCache
+Project.userprefs
