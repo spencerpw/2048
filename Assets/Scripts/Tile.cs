@@ -10,8 +10,7 @@ public class Tile : MonoBehaviour {
 
 	[SerializeField] private TextMeshProUGUI numberText;
 	[SerializeField] private Image image;
-	[SerializeField] private Color startColour;
-	[SerializeField] private Color endColour;
+	[SerializeField] private List<Color> colours;
 
 	public RectTransform rectTransform;
 	public int row;
@@ -37,7 +36,9 @@ public class Tile : MonoBehaviour {
 
 	public void SetColour() {
 		float power = Mathf.Log(Number) / Mathf.Log(2);
-		image.color = Color.Lerp(startColour,endColour, (power-1)/11f);
+		image.color = colours[(int)power - 1];
+
+		numberText.color = Number > 4 ? Color.white : Color.black;
 
 	}
 

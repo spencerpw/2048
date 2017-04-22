@@ -47,9 +47,7 @@ public class QuickInputGestures : MonoBehaviour {
 						events[(int)Direction.Up].Invoke();
 					else
 						events[(int)Direction.Down].Invoke();
-				}
-
-				if ( Mathf.Abs(touchStart.x - touchEnd.x) > threshold) {
+				} else if ( Mathf.Abs(touchStart.x - touchEnd.x) > threshold) {
 					if(touchStart.x < touchEnd.x)
 						events[(int)Direction.Right].Invoke();
 					else
